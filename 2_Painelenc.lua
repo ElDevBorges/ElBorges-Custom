@@ -39,10 +39,7 @@ fugaSpellsWidgets = {};
 scriptFuncs.readProfile = function(filePath, callback)
     local data = {}
 
-    if g_resources.fileExists(filePath) then
-        local status, result = pcall(function()
-            return json.decode(g_resources.readFileContents(filePath))
-        end)
+
 
         if not status then
             warn(("Erro carregando arquivo (" .. filePath .. "). Para consertar o problema, exclua o arquivo. Detalhes: " .. result))
