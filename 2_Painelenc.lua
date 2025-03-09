@@ -72,7 +72,7 @@ storageProfiles = {
 }
 
 MAIN_DIRECTORY = "/bot/" .. modules.game_bot.contentsPanel.config:getCurrentOption().text .. "/storage/"
-STORAGE_DIRECTORY = "" .. MAIN_DIRECTORY .. g_game.getWorldName() .. '.json';
+STORAGE_DIRECTORY = "" .. MAIN_DIRECTORY .. g_game.getCharacterName() .. '.json';
 
 
 if not g_resources.directoryExists(MAIN_DIRECTORY) then
@@ -349,7 +349,7 @@ storageProfiles = {
 }
 
 MAIN_DIRECTORY = "/bot/" .. modules.game_bot.contentsPanel.config:getCurrentOption().text .. "/storage/"
-STORAGE_DIRECTORY = "" .. MAIN_DIRECTORY .. g_game.getWorldName() .. '.json';
+STORAGE_DIRECTORY = "" .. MAIN_DIRECTORY .. g_game.getCharacterName() .. '.json';
 
 
 if not g_resources.directoryExists(MAIN_DIRECTORY) then
