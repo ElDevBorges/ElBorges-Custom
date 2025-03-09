@@ -42,7 +42,7 @@ scriptFuncs.readProfile = function(filePath, callback)
           return json.decode(g_resources.readFileContents(filePath))
       end)
       if not status then
-          return onError("Erro carregando arquivo (" .. filePath .. "). Para consertar o problema, exclua o arquivo. Detalhes: " .. result)
+          return warn(("Erro carregando arquivo (" .. filePath .. "). Para consertar o problema, exclua o arquivo. Detalhes: " .. result))
       end
 
       callback(result);
