@@ -37,17 +37,23 @@ comboSpellsWidget = {};
 fugaSpellsWidgets = {};
 
 scriptFuncs.readProfile = function(filePath, callback)
-  if g_resources.fileExists(filePath) then
-      local status, result = pcall(function()
-          return json.decode(g_resources.readFileContents(filePath))
-      end)
-      if not status then
-          return warn(("Erro carregando arquivo (" .. filePath .. "). Para consertar o problema, exclua o arquivo. Detalhes: " .. result))
-      end
+    local data = {}
 
-      callback(result);
-  end
+    if g_resources.fileExists(filePath) then
+        local status, result = pcall(function()
+            return json.decode(g_resources.readFileContents(filePath))
+        end)
+
+        if not status then
+            warn(("Erro carregando arquivo (" .. filePath .. "). Para consertar o problema, exclua o arquivo. Detalhes: " .. result))
+        else
+            data = result
+        end
+    end
+
+    callback(data) -- Garante que o callback sempre será chamado, mesmo se o arquivo não existir ou estiver corrompido.
 end
+
 
 scriptFuncs.saveProfile = function(configFile, content)
   local status, result = pcall(function()
