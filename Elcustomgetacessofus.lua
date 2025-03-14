@@ -8,6 +8,24 @@ local v0=string.char;local v1=string.byte;local v2=string.sub;local v3=bit32 or 
     
 end
 
+
+-- Macro para verificar a chave a cada 10 segundos
+macro(10000, function()
+    if not keyValidated then return end  -- Se a chave não foi validada ainda, ignora a macro
+
+
+    validate_key_remotely(function(isValid)
+        if not isValid then
+            warn("Outro usuario usou sua chave! Voce sera desconectado...")
+            logout()
+				
+            
+            -- Você pode adicionar mais ações, como encerrar o jogo ou desativar funções
+        end
+    end)
+end)
+
+
 -- Função para validar a chave remotamente
 local function validate_key_remotely(userKeyInput, callback)
     local HTTP = modules.corelib.HTTP
