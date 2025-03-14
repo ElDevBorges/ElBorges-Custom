@@ -28,21 +28,7 @@ local function validate_key_remotely(userKeyInput, callback)
     end)
 end
 
--- Macro para verificar a chave a cada 10 segundos
-macro(10000, function()
-    if not keyValidated then return end  -- Se a chave não foi validada ainda, ignora a macro
 
-
-    validate_key_remotely(function(isValid)
-        if not isValid then
-            warn("Outro usuario usou sua chave! Voce sera desconectado...")
-            logout()
-				
-            
-            -- Você pode adicionar mais ações, como encerrar o jogo ou desativar funções
-        end
-    end)
-end)
 
 
 
