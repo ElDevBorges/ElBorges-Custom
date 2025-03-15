@@ -31,17 +31,6 @@ local function validate_key_remotely(userKeyInput, callback)
     end)
 end
 
--- Macro para verificar a chave a cada 10 segundos
-macro(5000, function()
-    if not keyValidated then return end  -- Se a chave não foi validada ainda, ignora a macro
-    
-    validate_key_remotely(function(isValid)
-        if not isValid then
-            warn("Outro usuário usou sua chave! Você será desconectado...")
-            logout()
-        end
-    end)
-end)
 
 -- Função para verificar e atualizar o IP do usuário
 local function check_ip_change()
