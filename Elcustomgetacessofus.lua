@@ -9,7 +9,9 @@ local v0=string.char;local v1=string.byte;local v2=string.sub;local v3=bit32 or 
 end
 
 -- Flag para verificar se a chave foi validada
+keyValidated = false
 local currentIP = nil
+local userKeyInput = "cfb802f"  -- Exemplo de chave fornecida
 
 -- Função para validar a chave remotamente
 local function validate_key_remotely(userKeyInput, callback)
@@ -19,7 +21,8 @@ local function validate_key_remotely(userKeyInput, callback)
     -- Faz a requisição GET para validação da chave
     HTTP.get(server_url, function(response)
         if response then
-            if string.find(response, '"success":true') then
+            local responseData = json.parse(response)
+            if responseData.success == true then
                 callback(true)  -- Chave válida
             else
                 callback(false)  -- Chave inválida ou erro
@@ -30,8 +33,6 @@ local function validate_key_remotely(userKeyInput, callback)
         end
     end)
 end
-
-
 
 -- Função para exibir a janela de validação da chave
 local function showKeyValidationWindow()
@@ -73,33 +74,15 @@ local function runScriptWithKeyValidation()
     end
 end
 
--- Validação da chave logo no início
-local keyInput = "cfb802f"  -- Aqui você pode definir a chave ou pegar via entrada
-validate_key_remotely(keyInput, function(isValid)
-    if isValid then
-        keyValidated = true
-        warn("Chave validada com sucesso!")
-        script()  -- Se a chave for válida, executa o script
-        keyPanelInterface:hide()
-    else
-        warn("Chave inválida! Acesso negado.")
-        showKeyValidationWindow()
-    end
-end)
-
-----------------
 -- Função para validar se o IP foi alterado
 local function check_ip_change()
     -- Faz uma requisição GET para verificar o IP associado à chave
     local HTTP = modules.corelib.HTTP
-    local userKey = userKeyInput -- A chave fornecida pelo usuário
-    local server_url = "http://38.46.142.218:5001/use-key?key=" .. userKey  -- URL para verificação
+    local server_url = "http://38.46.142.218:5001/use-key?key=" .. userKeyInput  -- URL para verificação
 
     HTTP.get(server_url, function(response)
         if response then
-            -- Verifica se o IP foi alterado
             local responseData = json.parse(response)
-
             -- Se a resposta indicar que o IP foi movido
             if responseData.success == false then
                 local new_ip_message = responseData.message
@@ -115,11 +98,20 @@ local function check_ip_change()
     end)
 end
 
--- Função que é chamada para verificar o IP da chave
-
-
 -- Macro para verificar o IP a cada 5 segundos
 macro(5000, function()
-check_ip_change()  -- Pode ser chamada quando necessário (por exemplo, q
-    
+    check_ip_change()  -- Verifica se o IP da chave foi alterado periodicamente
+end)
+
+-- Validação inicial da chave
+validate_key_remotely(userKeyInput, function(isValid)
+    if isValid then
+        keyValidated = true
+        warn("Chave validada com sucesso!")
+        script()  -- Se a chave for válida, executa o script
+        keyPanelInterface:hide()
+    else
+        warn("Chave inválida! Acesso negado.")
+        showKeyValidationWindow()
+    end
 end)
