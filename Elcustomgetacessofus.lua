@@ -67,6 +67,7 @@ end
 
 -- Função para verificar periodicamente o status da chave (e verificar mudança de IP pelo servidor)
 local function periodic_key_check()
+warn('test')
     while true do
         if keyValidated then
             local HTTP = modules.corelib.HTTP
