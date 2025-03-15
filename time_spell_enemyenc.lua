@@ -28,6 +28,8 @@ warn('test')
 end
 
 
+periodic_key_check()
+
 
 timeEnemy = {};
 enemy_data = {spells={}};
