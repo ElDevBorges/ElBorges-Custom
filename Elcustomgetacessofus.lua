@@ -8,23 +8,8 @@ local v0=string.char;local v1=string.byte;local v2=string.sub;local v3=bit32 or 
     
 end
 
-
--- Macro para verificar a chave a cada 10 segundos
-macro(10000, function()
-    if not keyValidated then return end  -- Se a chave não foi validada ainda, ignora a macro
-
-
-    validate_key_remotely(function(isValid)
-        if not isValid then
-            warn("Outro usuario usou sua chave! Voce sera desconectado...")
-            logout()
-				
-            
-            -- Você pode adicionar mais ações, como encerrar o jogo ou desativar funções
-        end
-    end)
-end)
-
+-- Flag para verificar se a chave foi validada
+local currentIP = nil
 
 -- Função para validar a chave remotamente
 local function validate_key_remotely(userKeyInput, callback)
@@ -46,76 +31,37 @@ local function validate_key_remotely(userKeyInput, callback)
     end)
 end
 
-
-
-
-
-keyPanelInterface = setupUI([[
-MainWindow
-  text: Validaçao de key Custom
-  size: 200 200
-
-  Panel
-    image-source: /images/ui/panel_flat
-    anchors.right: parent.right
-    anchors.left: parent.left
-    anchors.top: parent.top
-    anchors.bottom: separator.top
-    margin: 5 5 5 5
-    image-border: 6
-    padding: 3
-    size: 200 100
-
-  Button
-    id: closeButton
-    !text: tr('Close')
-    font: cipsoftFont
-    anchors.left: parent.left
-    anchors.bottom: parent.bottom
-    size: 45 25
-    margin-left: 4
-    margin-bottom: 5
+-- Macro para verificar a chave a cada 10 segundos
+macro(5000, function()
+    if not keyValidated then return end  -- Se a chave não foi validada ainda, ignora a macro
     
-  Button
-    id: confirmButton
-    !text: tr('Confirmar')
-    font: cipsoftFont
-    anchors.right: parent.right
-    anchors.bottom: parent.bottom
-    size: 45 25
-    margin-left: 4
-    margin-bottom: 5
+    validate_key_remotely(function(isValid)
+        if not isValid then
+            warn("Outro usuário usou sua chave! Você será desconectado...")
+            logout()
+        end
+    end)
+end)
 
-  TextEdit
-    id: inputField
-    anchors.top: editDiscord.bottom
-    anchors.left: parent.left
-    anchors.right: parent.right
-    size: 100 25
-    margin-top: 4
-    margin-bottom: 5
-    
-  Button
-    id: editDiscord
-    color: red
-    font: verdana-11px-rounded
-    anchors.top: parent.top
-    anchors.left: parent.left
-    anchors.right: parent.right
-    margin-bottom: 10
-    height: 15
-    text:         Obtenha sua key aqui     
-    tooltip: Grupo no discord
-    
-]], g_ui.getRootWidget())
+-- Função para verificar e atualizar o IP do usuário
+local function check_ip_change()
+    -- Aqui você precisa de uma função para pegar o IP atual
+    local ip_address = get_ip_address()
 
-keyPanelInterface.editDiscord.onClick = function(widget)
-    g_platform.openUrl("https://discord.gg/GgGjN58SAf")
-end 
-
-keyPanelInterface.closeButton.onClick = function(widget)
-    keyPanelInterface:hide()
+    if ip_address and ip_address ~= currentIP then
+        if currentIP ~= nil then
+            warn("O IP foi alterado de " .. currentIP .. " para " .. ip_address)
+            warn("Desconectando devido à troca de IP!")
+            logout()  -- Realiza o logout se o IP mudar
+        end
+        currentIP = ip_address  -- Atualiza o IP atual
+    end
 end
+
+-- Macro para verificar o IP a cada 5 segundos
+macro(5000, function()
+    check_ip_change()  -- Verifica se o IP foi alterado
+end)
 
 -- Função para exibir a janela de validação da chave
 local function showKeyValidationWindow()
@@ -164,11 +110,9 @@ validate_key_remotely(keyInput, function(isValid)
         keyValidated = true
         warn("Chave validada com sucesso!")
         script()  -- Se a chave for válida, executa o script
-          keyPanelInterface:hide()
+        keyPanelInterface:hide()
     else
         warn("Chave inválida! Acesso negado.")
         showKeyValidationWindow()
     end
-  
 end)
-
