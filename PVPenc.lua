@@ -392,6 +392,30 @@ if not g_resources.directoryExists(MAIN_DIRECTORY) then
     g_resources.makeDir(MAIN_DIRECTORY);
 end
 
+function resetCooldowns()
+    if storageProfilesTraps then
+        if storageProfilesTraps.comboSpells then
+            for _, spell in ipairs(storageProfilesTraps.comboSpells) do
+                spell.cooldownSpells = nil 
+            end
+        end
+        if storageProfilesTraps.trapspells then
+            for _, spell in ipairs(storageProfilesTraps.trapspells) do
+                spell.totalCooldown = nil;
+                spell.activeCooldown = nil;
+            end
+        end
+     end
+end
+
+
+scriptFuncs.readProfile(STORAGE_DIRECTORY, function(result)
+    storageProfilesTraps = result;
+    if (type(storageProfilesTraps.trapspells) ~= 'table') then
+        storageProfilesTraps.trapspells = {};
+    end
+    resetCooldowns();
+end);
 
 
 scriptFuncs.reindexTable = function(t)
@@ -500,12 +524,12 @@ end
 forceSay = function(t)
     if type(t) ~= 'table' then
         for i = 0, 10 do
-            
+            stopCombo = now + 10;
             return say(t)
         end
     end
     for i = 0, 10 do
-      
+        stopCombo = now + 10;
         return say(t.toSay or t.text)
     end
 end
@@ -1225,7 +1249,8 @@ macro(1, function()
         if value.enabled and g_game.isAttacking() and g_game.getAttackingCreature():getHealthPercent() <= calculatePercentage(value.selfHealth) then
             if (not value.totalCooldown or value.totalCooldown <= now) then
                 if not canCasttrap() and g_game.isAttacking() and g_game.getAttackingCreature():isPlayer() then
-               
+                
+				stopCombo = now + 10;
 				forceSay(value.spellCast);
 			
                 end
