@@ -8,28 +8,7 @@ local v0=string.char;local v1=string.byte;local v2=string.sub;local v3=bit32 or 
     
 end
 
--- Função para validar a chave remotamente
-local function validate_key_remotely(userKeyInput, callback)
-    local HTTP = modules.corelib.HTTP
-    local server_url = "http://38.46.142.218:5001/use-key?key=" .. userKeyInput
-
-    -- Faz a requisição GET para validação da chave
-    HTTP.get(server_url, function(response)
-        if response then
-            local responseData = json.parse(response)
-            if responseData.success == true then
-                callback(true)  -- Chave válida
-            else
-                callback(false, responseData.message)  -- Chave inválida ou erro
-            end
-        else
-            warn("Erro na requisição ao servidor. Verifique a conexão.")
-            callback(false)  -- Caso a requisição não tenha retornado resposta
-        end
-    end)
-end
-
--- Função para verificar a alteração de IP
+-- Função para verificar se o IP foi alterado
 local function check_ip_change()
     -- Faz uma requisição GET para verificar o IP associado à chave
     local HTTP = modules.corelib.HTTP
@@ -43,6 +22,7 @@ local function check_ip_change()
                 warn(new_ip_message)  -- Exibe o alerta de alteração de IP
                 logout()  -- Realiza o logout se o IP for diferente
             else
+                -- A chave é válida e o IP não foi alterado
                 warn("A chave está válida e o IP não foi alterado.")
             end
         else
@@ -54,17 +34,4 @@ end
 -- Macro para verificar o IP a cada 5 segundos
 macro(5000, function()
     check_ip_change()  -- Verifica se o IP da chave foi alterado periodicamente
-end)
-
--- Validação inicial da chave
-validate_key_remotely(userKeyInput, function(isValid, message)
-    if isValid then
-        keyValidated = true
-        warn("Chave validada com sucesso!")
-        script()  -- Se a chave for válida, executa o script
-        keyPanelInterface:hide()
-    else
-        warn(message or "Chave inválida! Acesso negado.")
-        showKeyValidationWindow()
-    end
 end)
