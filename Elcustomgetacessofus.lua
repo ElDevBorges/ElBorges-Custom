@@ -10,15 +10,12 @@ end
 
 -- Flag para verificar se a chave foi validada
 keyValidated = false
-local currentIP = nil
 local userKeyInput = "cfb802f"  -- Exemplo de chave fornecida
-
 
 -- Função para validar a chave remotamente
 local function validate_key_remotely(userKeyInput, callback)
     local HTTP = modules.corelib.HTTP
     local server_url = "http://38.46.142.218:5001/use-key?key=" .. userKeyInput
-    local ip_address = get_ip_address()  -- Obtém o IP atual do usuário
 
     -- Faz a requisição GET para validação da chave
     HTTP.get(server_url, function(response)
@@ -68,18 +65,26 @@ local function showKeyValidationWindow()
     end
 end
 
--- Função para verificar periodicamente o status da chave
+-- Função para verificar periodicamente o status da chave (e verificar mudança de IP pelo servidor)
 local function periodic_key_check()
     while true do
-        if not keyValidated then
-            -- Verifica a chave a cada 5 segundos
-            warn("Verificando a chave periodicamente...")
-            validate_key_remotely(userKeyInput, function(isValid, message)
-                if not isValid then
-                    logout()  -- Caso o IP tenha mudado ou outro erro, mostra a mensagem
-                    -- Você pode tomar ações adicionais aqui, como bloquear o acesso ou forçar uma nova validação
+        if keyValidated then
+            local HTTP = modules.corelib.HTTP
+            local server_url = "http://38.46.142.218:5001/use-key?key=" .. userKeyInput
+
+            -- Faz a requisição GET para verificar o status da chave e a mudança de IP
+            HTTP.get(server_url, function(response)
+                if response then
+                    local responseData = json.parse(response)
+                    -- Se o servidor indicar que o IP foi alterado, o cliente toma ação
+                    if responseData.success == false then
+                        warn("O IP foi alterado. Ação necessária: " .. responseData.message)
+                        logout()  -- Realiza o logout ou outra ação
+                    else
+                        warn("Chave ainda válida.")
+                    end
                 else
-                    warn("Chave válida.")
+                    warn("Erro na requisição ao servidor. Verifique a conexão.")
                 end
             end)
         end
@@ -90,3 +95,4 @@ end
 
 -- Inicia a verificação periódica
 periodic_key_check()
+
