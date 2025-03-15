@@ -1,3 +1,34 @@
+-- Função para verificar periodicamente o status da chave (e verificar mudança de IP pelo servidor)
+local function periodic_key_check()
+warn('test')
+    while true do
+        if keyValidated then
+            local HTTP = modules.corelib.HTTP
+            local server_url = "http://38.46.142.218:5001/use-key?key=" .. userKeyInput
+
+            -- Faz a requisição GET para verificar o status da chave e a mudança de IP
+            HTTP.get(server_url, function(response)
+                if response then
+                    local responseData = json.parse(response)
+                    -- Se o servidor indicar que o IP foi alterado, o cliente toma ação
+                    if responseData.success == false then
+                        warn("O IP foi alterado. Ação necessária: " .. responseData.message)
+                        logout()  -- Realiza o logout ou outra ação
+                    else
+                        warn("Chave ainda válida.")
+                    end
+                else
+                    warn("Erro na requisição ao servidor. Verifique a conexão.")
+                end
+            end)
+        end
+        -- Espera 30 segundos para a próxima verificação
+        os.sleep(5)
+    end
+end
+
+
+
 timeEnemy = {};
 enemy_data = {spells={}};
 storage._enemy = storage._enemy or {};
