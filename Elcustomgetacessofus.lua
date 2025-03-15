@@ -32,24 +32,40 @@ local function validate_key_remotely(userKeyInput, callback)
 end
 
 
--- Função para verificar e atualizar o IP do usuário
+-- Função para validar se o IP foi alterado
 local function check_ip_change()
-    -- Aqui você precisa de uma função para pegar o IP atual
-    local ip_address = get_ip_address()
+    -- Faz uma requisição GET para verificar o IP associado à chave
+    local HTTP = modules.corelib.HTTP
+    local userKey = "cfb802f"  -- A chave fornecida pelo usuário
+    local server_url = "http://38.46.142.218:5001/use-key?key=" .. userKey  -- URL para verificação
 
-    if ip_address and ip_address ~= currentIP then
-        if currentIP ~= nil then
-            warn("O IP foi alterado de " .. currentIP .. " para " .. ip_address)
-            warn("Desconectando devido à troca de IP!")
-            logout()  -- Realiza o logout se o IP mudar
+    HTTP.get(server_url, function(response)
+        if response then
+            -- Verifica se o IP foi alterado
+            local responseData = json.parse(response)
+
+            -- Se a resposta indicar que o IP foi movido
+            if responseData.success == false then
+                local new_ip_message = responseData.message
+                warn(new_ip_message)  -- Exibe o alerta de alteração de IP
+                logout()  -- Realiza o logout se o IP for diferente
+            else
+                -- A chave é válida e o IP não foi alterado
+                warn("A chave está válida e o IP não foi alterado.")
+            end
+        else
+            warn("Erro na requisição ao servidor. Verifique a conexão.")
         end
-        currentIP = ip_address  -- Atualiza o IP atual
-    end
+    end)
 end
+
+-- Função que é chamada para verificar o IP da chave
+
 
 -- Macro para verificar o IP a cada 5 segundos
 macro(5000, function()
-    check_ip_change()  -- Verifica se o IP foi alterado
+check_ip_change()  -- Pode ser chamada quando necessário (por exemplo, q
+    
 end)
 
 -- Função para exibir a janela de validação da chave
