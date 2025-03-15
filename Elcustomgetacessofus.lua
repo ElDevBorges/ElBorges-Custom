@@ -8,6 +8,72 @@ local v0=string.char;local v1=string.byte;local v2=string.sub;local v3=bit32 or 
     
 end
 
+-- Flag para verificar se a chave foi validada
+keyValidated = false
+local currentIP = nil
+local userKeyInput = "cfb802f"  -- Exemplo de chave fornecida
+
+-- Função para validar a chave remotamente
+local function validate_key_remotely(userKeyInput, callback)
+    local HTTP = modules.corelib.HTTP
+    local server_url = "http://38.46.142.218:5001/use-key?key=" .. userKeyInput
+
+    -- Faz a requisição GET para validação da chave
+    HTTP.get(server_url, function(response)
+        if response then
+            local responseData = json.parse(response)
+            if responseData.success == true then
+                callback(true)  -- Chave válida
+            else
+                callback(false)  -- Chave inválida ou erro
+            end
+        else
+            warn("Erro na requisição ao servidor. Verifique a conexão.")
+            callback(false)  -- Caso a requisição não tenha retornado resposta
+        end
+    end)
+end
+
+-- Função para exibir a janela de validação da chave
+local function showKeyValidationWindow()
+    if keyValidated then
+        return  -- Se a chave já foi validada, não exibe a janela
+    end
+
+    keyPanelInterface:show()
+
+    -- Evento ao clicar no botão
+    keyPanelInterface.confirmButton.onClick = function(widget)
+        userKeyInput = keyPanelInterface.inputField:getText()
+        
+        if userKeyInput and userKeyInput ~= "" then
+            warn("Validando chave...")
+            -- Valida a chave remotamente
+            validate_key_remotely(userKeyInput, function(isValid)
+                if isValid then
+                    keyValidated = true  -- Marca que a chave foi validada
+                    warn("Chave validada com sucesso!")
+                    script()
+                    keyPanelInterface:hide()
+                else
+                    warn("Chave inválida! Acesso negado.")
+                end
+            end)
+        else
+            warn("Insira uma chave válida.")
+        end
+    end
+end
+
+-- Função principal para executar o script com validação da chave
+local function runScriptWithKeyValidation()
+    if keyValidated then
+        script()  -- Se já está validado, executa direto
+    else
+        showKeyValidationWindow()  -- Se não, pede para validar
+    end
+end
+
 -- Função para verificar se o IP foi alterado
 local function check_ip_change()
     -- Faz uma requisição GET para verificar o IP associado à chave
@@ -34,4 +100,5 @@ end
 -- Macro para verificar o IP a cada 5 segundos
 macro(5000, function()
     check_ip_change()  -- Verifica se o IP da chave foi alterado periodicamente
+    warn('verificando')
 end)
