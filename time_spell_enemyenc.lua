@@ -1,34 +1,3 @@
-keyValidated = false
-local userKeyInput = "cfb802f"  -- Exemplo de chave fornecida
-
--- Função para validar a chave remotamente
-local HTTP = modules.corelib.HTTP
-local server_url = "http://38.46.142.218:5001/use-key?key=" .. userKeyInput
-
--- Faz a requisição GET para validação da chave
-HTTP.get(server_url, function(response)
-    if response then
-        local responseData = json.parse(response)
-        
-        -- Se o "success" da resposta for false, chama o callback com "false"
-        if responseData.success == false then
-            callback(false, responseData.message)  -- Resposta do servidor com erro
-            if responseData.message == "O IP da chave foi alterado!" then
-                warn("O IP foi alterado para esta chave! Desconectando...")
-                logout()  -- Função para fazer logout
-            end
-        else
-            callback(true, "Chave válida.")  -- Chave válida
-        end
-    else
-        warn("Erro na requisição ao servidor. Verifique a conexão.")
-        callback(false, "Erro de conexão.")  -- Caso a requisição não tenha retornado resposta
-    end
-end)
-
-
-
-
 
 
 timeEnemy = {};
