@@ -2446,45 +2446,6 @@ CONFIG = {
 
 
 
-biju = macro(1,'bijuu regeneration', function()
-    local hppercent = hppercent();
-    if isInPz() then return; end
-    if player:getOutfit().type == storage.outfitBijuu and hppercent <= 99 then
-        for index, value in ipairs(CONFIG.regenBju) do
-            if (not value.exhaust or value.exhaust <= now) then
-                say(value.spell)
-            end
-        end
-    end
-end, hpPanel)
-
-os = os or modules.os;
-local playerName = player:getName()
-
-
-
-
-OutfitCheck = function()
-	return player:getOutfit().type == tonumber(OutfitBijuu)
-end
-
-onTalk(function(name, _, _, text)
-    if name == player:getName() then
-        if text == 'Bijuu Yaiba' then
-            yaibaSlow = os.time() + 15
-        end
-    end
-end)
-
-macro(1, function()
-    if isInPz() then
-        return
-    end
-    if yaibaSlow and yaibaSlow >= os.time() then return; end
-        if player:getOutfit().type == 302 then
-        say('bijuu yaiba')
-    end
-end)
 
 
 
@@ -3294,6 +3255,46 @@ big = macro(1,'big regeneration', function()
     end
   end, hpPanel);
   
+  biju = macro(1,'bijuu regeneration', function()
+    local hppercent = hppercent();
+    if isInPz() then return; end
+    if player:getOutfit().type == storage.outfitBijuu and hppercent <= 99 then
+        for index, value in ipairs(CONFIG.regenBju) do
+            if (not value.exhaust or value.exhaust <= now) then
+                say(value.spell)
+            end
+        end
+    end
+end, hpPanel)
+
+os = os or modules.os;
+local playerName = player:getName()
+
+
+
+
+OutfitCheck = function()
+	return player:getOutfit().type == tonumber(OutfitBijuu)
+end
+
+onTalk(function(name, _, _, text)
+    if name == player:getName() then
+        if text == 'Bijuu Yaiba' then
+            yaibaSlow = os.time() + 15
+        end
+    end
+end)
+
+macro(1, function()
+    if isInPz() then
+        return
+    end
+    if yaibaSlow and yaibaSlow >= os.time() then return; end
+        if player:getOutfit().type == 302 then
+        say('bijuu yaiba')
+    end
+end)
+
 
 
 
