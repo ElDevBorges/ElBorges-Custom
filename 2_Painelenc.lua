@@ -3285,6 +3285,7 @@ addTextEdit("outfitBijuu", storage.outfitBijuu or "302", function(widget, text)
 end, hpPanel)
 
 
+
 -----------CORRER
 
 TabBar:addTab("Correr", hpPanel3)
