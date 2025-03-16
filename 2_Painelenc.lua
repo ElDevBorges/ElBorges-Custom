@@ -2292,7 +2292,7 @@ onTalk(function(name, level, mode, text, channelId, pos)
             if not (value.enableLifes or value.enableRevive or value.enableMultiple) then
                 value.activeCooldown = now + (value.cooldownActive * 1000) - 250;
                 value.totalCooldown = now + (value.cooldownTotal * 1000) - 250;
-                warn(text)
+               
                 break
             end
         end
@@ -3267,7 +3267,14 @@ TabBar:addTab("Curas", hpPanel)
 color:setColor("orange")
         UI.Separator(hpPanel)
         
-        macro(1,'big regeneration', function()
+        
+UI.Label('ID BIJUU:', hpPanel):setFont('cipsoftFont')
+
+addTextEdit("outfitBijuu", storage.outfitBijuu or "302", function(widget, text)
+	storage.outfitBijuu = tonumber(text)
+end, hpPanel)
+
+big = macro(1,'big regeneration', function()
     if player:getOutfit().type == storage.outfitBijuu then return; end
     if hppercent() >= 100 then return; end
     for index, value in ipairs(CONFIG.regen) do
@@ -3275,15 +3282,7 @@ color:setColor("orange")
             say(value.spell)
         end
     end
-  end, hppanel);
-
-
-UI.Label('ID BIJUU:', hpPanel):setFont('cipsoftFont')
-
-addTextEdit("outfitBijuu", storage.outfitBijuu or "302", function(widget, text)
-	storage.outfitBijuu = tonumber(text)
-end, hpPanel)
-
+  end, hpPanel);
 
 
 
@@ -3307,23 +3306,55 @@ end, hpPanel3)
 -----------BUGMAP
 local bugMap = {};
 
-bugmap = macro(1, "Bug Map", function()
-    if (modules.game_console:isChatEnabled() or modules.corelib.g_keyboard.isCtrlPressed()) then return; end
-    local pos = pos();
-    for key, config in pairs(bugMap.directions) do
-        if (bugMap.isKeyPressed(key)) then
-            if (storage.bugMapCheck or config.direction) then
-                if (config.direction) then
-					turn(config.direction);
-				end
-                local tile = g_map.getTile({x = pos.x + config.x, y = pos.y + config.y, z = pos.z});
-                if (tile) then
-					return g_game.use(tile:getTopUseThing());
-				end
-            end
-        end
+-----------------BUGMAP
+local function checkPos(x, y)
+    local player = g_game.getLocalPlayer()
+    
+    if not player then
+        warn("Jogador não encontrado.")
+        return false
     end
-end, hpPanel3);
+    
+    local xyz = player:getPosition()
+    
+    -- Ajustar a posição baseada nos valores de x e y fornecidos
+    xyz.x = xyz.x + x
+    xyz.y = xyz.y + y
+
+    -- Obter o tile na posição ajustada
+    local tile = g_map.getTile(xyz)
+
+    -- Verifica se o tile existe e interage com o que está no topo (como portas, etc.)
+    if tile then
+        return g_game.use(tile:getTopUseThing())  
+    else
+        return false
+    end
+end
+
+-- Referência ao módulo do console
+local consoleModule = modules.game_console
+
+-- Macro que verifica as teclas pressionadas e chama a função checkPos com os deslocamentos correspondentes
+bugmap = macro(1, 'Bug Map', function()
+    if modules.corelib.g_keyboard.isKeyPressed('w') and not consoleModule:isChatEnabled() then
+        checkPos(0, -5)  -- Mover para cima (norte)
+    elseif modules.corelib.g_keyboard.isKeyPressed('e') and not consoleModule:isChatEnabled() then
+        checkPos(3, -3)  -- Mover para nordeste
+    elseif modules.corelib.g_keyboard.isKeyPressed('d') and not consoleModule:isChatEnabled() then
+        checkPos(5, 0)   -- Mover para a direita (leste)
+    elseif modules.corelib.g_keyboard.isKeyPressed('c') and not consoleModule:isChatEnabled() then
+        checkPos(3, 3)   -- Mover para sudeste
+    elseif modules.corelib.g_keyboard.isKeyPressed('s') and not consoleModule:isChatEnabled() then
+        checkPos(0, 5)   -- Mover para baixo (sul)
+    elseif modules.corelib.g_keyboard.isKeyPressed('z') and not consoleModule:isChatEnabled() then
+        checkPos(-3, 3)  -- Mover para sudoeste
+    elseif modules.corelib.g_keyboard.isKeyPressed('a') and not consoleModule:isChatEnabled() then
+        checkPos(-5, 0)  -- Mover para a esquerda (oeste)
+    elseif modules.corelib.g_keyboard.isKeyPressed('q') and not consoleModule:isChatEnabled() then
+        checkPos(-3, -3) -- Mover para noroeste
+    end
+end, hpPanel3) 
 
 bugmap = addIcon("Bug Map", {item = 10610, text = "Bug Map"}, bugmap)
 
