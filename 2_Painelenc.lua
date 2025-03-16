@@ -3245,18 +3245,6 @@ addTextEdit("outfitBijuu", storage.outfitBijuu or "302", function(widget, text)
 	storage.outfitBijuu = tonumber(text)
 end, hpPanel)
 
-big = macro(1,'big regeneration', function()
-    if player:getOutfit().type == storage.outfitBijuu then return; end
-    if hppercent() >= 100 then return; end
-    for index, value in ipairs(CONFIG.regen) do
-        if (not value.exhaust or value.exhaust <= now) then
-            say(value.spell)
-        end
-    end
-  end, hpPanel)
-  
-TabBar:addTab("Curas", hpPanel)
-  
 biju = macro(1,'bijuu regeneration', function()
     local hppercent = hppercent();
     if isInPz() then return; end
@@ -3268,6 +3256,19 @@ biju = macro(1,'bijuu regeneration', function()
         end
     end
 end, hpPanel)
+
+big = macro(1,'big regeneration', function()
+    if player:getOutfit().type == storage.outfitBijuu then return; end
+    if hppercent() >= 100 then return; end
+    for index, value in ipairs(CONFIG.regen) do
+        if (not value.exhaust or value.exhaust <= now) then
+            say(value.spell)
+        end
+    end
+  end, hpPanel)
+  
+  
+
 
 os = os or modules.os;
 local playerName = player:getName()
