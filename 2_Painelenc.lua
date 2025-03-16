@@ -3227,6 +3227,16 @@ CONFIG = {
   }
 
 
+macro(1,'big regeneration', function()
+    if player:getOutfit().type == storage.outfitBijuu then return; end
+    if hppercent() >= 100 then return; end
+    for index, value in ipairs(CONFIG.regen) do
+        if (not value.exhaust or value.exhaust <= now) then
+            say(value.spell)
+        end
+    end
+  end);
+
 macro(1, function()
     local hppercent = hppercent();
     if isInPz() then return; end
@@ -3260,7 +3270,7 @@ onTalk(function(name, _, _, text)
     end
 end)
 
-macro(1,'big regeneration', function()
+macro(1, function()
     if isInPz() then
         return
     end
