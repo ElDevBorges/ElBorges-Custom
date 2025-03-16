@@ -3205,7 +3205,7 @@ addTextEdit("outfitBijuu", storage.outfitBijuu or "302", function(widget, text)
 	storage.outfitBijuu = tonumber(text)
 end, hpPanel)
 
-UI.Separator(leftPanel)
+UI.Separator()
 
 
 CONFIG = {
