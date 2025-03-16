@@ -2427,9 +2427,6 @@ UI.Separator(leftPanel)
 
 
 CONFIG = {
-   regen = {
-        {spell = 'big regeneration', cooldown = 100},
-    },
     regenBju = {
         {spell = 'bijuu regeneration', cooldown = 100},
     },
