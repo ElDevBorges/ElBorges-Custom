@@ -3267,15 +3267,7 @@ TabBar:addTab("Curas", hpPanel)
 color:setColor("orange")
         UI.Separator(hpPanel)
         
-        
-
-UI.Label('ID BIJUU:', hpPanel):setFont('cipsoftFont')
-
-addTextEdit("outfitBijuu", storage.outfitBijuu or "302", function(widget, text)
-	storage.outfitBijuu = tonumber(text)
-end, hpPanel)
-
-macro(1,'big regeneration', function()
+        macro(1,'big regeneration', function()
     if player:getOutfit().type == storage.outfitBijuu then return; end
     if hppercent() >= 100 then return; end
     for index, value in ipairs(CONFIG.regen) do
@@ -3284,6 +3276,14 @@ macro(1,'big regeneration', function()
         end
     end
   end, hppanel);
+
+
+UI.Label('ID BIJUU:', hpPanel):setFont('cipsoftFont')
+
+addTextEdit("outfitBijuu", storage.outfitBijuu or "302", function(widget, text)
+	storage.outfitBijuu = tonumber(text)
+end, hpPanel)
+
 
 
 
