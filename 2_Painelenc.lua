@@ -3253,9 +3253,9 @@ big = macro(1,'big regeneration', function()
             say(value.spell)
         end
     end
-  end, hpPanel);
+  end, hpPanel)
   
-  biju = macro(1,'bijuu regeneration', function()
+biju = macro(1,'bijuu regeneration', function()
     local hppercent = hppercent();
     if isInPz() then return; end
     if player:getOutfit().type == storage.outfitBijuu and hppercent <= 99 then
