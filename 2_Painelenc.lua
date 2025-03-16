@@ -2446,10 +2446,20 @@ CONFIG = {
 
 
 
+biju = macro(1,'bijuu regeneration', function()
+    local hppercent = hppercent();
+    if isInPz() then return; end
+    if player:getOutfit().type == storage.outfitBijuu and hppercent <= 99 then
+        for index, value in ipairs(CONFIG.regenBju) do
+            if (not value.exhaust or value.exhaust <= now) then
+                say(value.spell)
+            end
+        end
+    end
+end, hpPanel)
 
 os = os or modules.os;
 local playerName = player:getName()
-
 
 
 
@@ -3284,17 +3294,7 @@ big = macro(1,'big regeneration', function()
     end
   end, hpPanel);
   
-macro(1,'bijuu regeneration', function()
-    local hppercent = hppercent();
-    if isInPz() then return; end
-    if player:getOutfit().type == storage.outfitBijuu and hppercent <= 99 then
-        for index, value in ipairs(CONFIG.regenBju) do
-            if (not value.exhaust or value.exhaust <= now) then
-                say(value.spell)
-            end
-        end
-    end
-end, hpPanel)
+
 
 
 
