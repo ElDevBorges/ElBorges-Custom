@@ -3260,7 +3260,7 @@ onTalk(function(name, _, _, text)
     end
 end)
 
-macro(1,'big regeneration' function()
+macro(1,'big regeneration', function()
     if isInPz() then
         return
     end
