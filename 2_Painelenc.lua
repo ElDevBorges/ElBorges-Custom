@@ -2427,9 +2427,6 @@ UI.Separator(leftPanel)
 
 
 CONFIG = {
-	 regen = {
-        {spell = 'big regeneration', cooldown = 100},
-    },
     regenBju = {
         {spell = 'bijuu regeneration', cooldown = 100},
     },
@@ -2443,16 +2440,6 @@ CONFIG = {
         {id = 11813, orangeText = 'i feel better!', cooldown = 400},
     }
   }
-
-macro(1,'big regeneration', function()
-    if player:getOutfit().type == storage.outfitBijuu then return; end
-    if hppercent() >= 100 then return; end
-    for index, value in ipairs(CONFIG.regen) do
-        if (not value.exhaust or value.exhaust <= now) then
-            say(value.spell)
-        end
-    end
-  end);
 
 
 macro(1, function()
@@ -3287,6 +3274,7 @@ end,hpPanel4);
 TabBar:addTab("Curas", hpPanel)
         color= UI.Label("ElDevBorges",hpPanel)
 color:setColor("orange")
+        UI.Separator(hpPanel)
         
         
 
@@ -3295,8 +3283,6 @@ UI.Label('ID BIJUU:', hpPanel):setFont('cipsoftFont')
 addTextEdit("outfitBijuu", storage.outfitBijuu or "302", function(widget, text)
 	storage.outfitBijuu = tonumber(text)
 end, hpPanel)
-
-
 
 
 -----------CORRER
@@ -3336,55 +3322,6 @@ bugmap = macro(1, "Bug Map", function()
         end
     end
 end, hpPanel3);
-------------------
-local function checkPos(x, y)
-    local player = g_game.getLocalPlayer()
-    
-    if not player then
-        warn("Jogador não encontrado.")
-        return false
-    end
-    
-    local xyz = player:getPosition()
-    
-    -- Ajustar a posição baseada nos valores de x e y fornecidos
-    xyz.x = xyz.x + x
-    xyz.y = xyz.y + y
-
-    -- Obter o tile na posição ajustada
-    local tile = g_map.getTile(xyz)
-
-    -- Verifica se o tile existe e interage com o que está no topo (como portas, etc.)
-    if tile then
-        return g_game.use(tile:getTopUseThing())  
-    else
-        return false
-    end
-end
-
--- Referência ao módulo do console
-local consoleModule = modules.game_console
-
--- Macro que verifica as teclas pressionadas e chama a função checkPos com os deslocamentos correspondentes
-bugmap = macro(1, 'Bug Map', function()
-    if modules.corelib.g_keyboard.isKeyPressed('w') and not consoleModule:isChatEnabled() then
-        checkPos(0, -5)  -- Mover para cima (norte)
-    elseif modules.corelib.g_keyboard.isKeyPressed('e') and not consoleModule:isChatEnabled() then
-        checkPos(3, -3)  -- Mover para nordeste
-    elseif modules.corelib.g_keyboard.isKeyPressed('d') and not consoleModule:isChatEnabled() then
-        checkPos(5, 0)   -- Mover para a direita (leste)
-    elseif modules.corelib.g_keyboard.isKeyPressed('c') and not consoleModule:isChatEnabled() then
-        checkPos(3, 3)   -- Mover para sudeste
-    elseif modules.corelib.g_keyboard.isKeyPressed('s') and not consoleModule:isChatEnabled() then
-        checkPos(0, 5)   -- Mover para baixo (sul)
-    elseif modules.corelib.g_keyboard.isKeyPressed('z') and not consoleModule:isChatEnabled() then
-        checkPos(-3, 3)  -- Mover para sudoeste
-    elseif modules.corelib.g_keyboard.isKeyPressed('a') and not consoleModule:isChatEnabled() then
-        checkPos(-5, 0)  -- Mover para a esquerda (oeste)
-    elseif modules.corelib.g_keyboard.isKeyPressed('q') and not consoleModule:isChatEnabled() then
-        checkPos(-3, -3) -- Mover para noroeste
-    end
-end) 
 
 bugmap = addIcon("Bug Map", {item = 10610, text = "Bug Map"}, bugmap)
 
