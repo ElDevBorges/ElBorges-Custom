@@ -2292,7 +2292,7 @@ onTalk(function(name, level, mode, text, channelId, pos)
             if not (value.enableLifes or value.enableRevive or value.enableMultiple) then
                 value.activeCooldown = now + (value.cooldownActive * 1000) - 250;
                 value.totalCooldown = now + (value.cooldownTotal * 1000) - 250;
-               
+                warn(text)
                 break
             end
         end
@@ -3384,8 +3384,7 @@ bugmap = macro(1, 'Bug Map', function()
     elseif modules.corelib.g_keyboard.isKeyPressed('q') and not consoleModule:isChatEnabled() then
         checkPos(-3, -3) -- Mover para noroeste
     end
-end, hpPanel3) 
-end, hpPanel3) 
+end) 
 
 bugmap = addIcon("Bug Map", {item = 10610, text = "Bug Map"}, bugmap)
 
