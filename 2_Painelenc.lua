@@ -3255,6 +3255,8 @@ big = macro(1,'big regeneration', function()
     end
   end, hpPanel)
   
+TabBar:addTab("Curas", hpPanel)
+  
 biju = macro(1,'bijuu regeneration', function()
     local hppercent = hppercent();
     if isInPz() then return; end
