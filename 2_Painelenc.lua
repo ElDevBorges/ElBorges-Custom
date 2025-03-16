@@ -3289,7 +3289,25 @@ end, hpPanel)
 
 
 -- create 2 healing widgets
+for _, healingInfo in ipairs({storage.heal}) do
+  local healingmacro = macro(10, function()
+    local hp = player:getHealthPercent()
+	if player:getOutfit().type == storage.outfitBijuu then return end
+    if healingInfo.max >= hp and hp >= healingInfo.min then
+      if TargetBot then
+        TargetBot.saySpell(healingInfo.text) -- sync spell with targetbot if available
+      else
+        say(healingInfo.text)
+      end
+    end
+  end,hpPanel)
+  healingmacro.setOn(healingInfo.on)
 
+  UI.DualScrollPanel(healingInfo, function(widget, newParams)
+    healingInfo = newParams
+    healingmacro.setOn(healingInfo.on)
+  end,hpPanel)
+end
 
 -----------CORRER
 
