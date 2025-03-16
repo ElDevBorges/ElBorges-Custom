@@ -3285,26 +3285,16 @@ addTextEdit("outfitBijuu", storage.outfitBijuu or "302", function(widget, text)
 end, hpPanel)
 
 
--- create 2 healing widgets
-for _, healingInfo in ipairs({storage.heal}) do
-  local healingmacro = macro(10, function()
-    local hp = player:getHealthPercent()
-	if player:getOutfit().type == storage.outfitBijuu then return end
-    if healingInfo.max >= hp and hp >= healingInfo.min then
-      if TargetBot then
-        TargetBot.saySpell(healingInfo.text) -- sync spell with targetbot if available
-      else
-        say(healingInfo.text)
-      end
+macro(1,'big regeneration', function()
+    if player:getOutfit().type == storage.outfitBijuu then return; end
+    if hppercent() >= 100 then return; end
+    for index, value in ipairs(CONFIG.regen) do
+        if (not value.exhaust or value.exhaust <= now) then
+            say(value.spell)
+        end
     end
-  end,hpPanel)
-  healingmacro.setOn(healingInfo.on)
+  end);
 
-  UI.DualScrollPanel(healingInfo, function(widget, newParams)
-    healingInfo = newParams
-    healingmacro.setOn(healingInfo.on)
-  end,hpPanel)
-end
 
 -----------CORRER
 
