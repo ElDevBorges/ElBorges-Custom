@@ -2292,7 +2292,7 @@ onTalk(function(name, level, mode, text, channelId, pos)
             if not (value.enableLifes or value.enableRevive or value.enableMultiple) then
                 value.activeCooldown = now + (value.cooldownActive * 1000) - 250;
                 value.totalCooldown = now + (value.cooldownTotal * 1000) - 250;
-                warn(text)
+               
                 break
             end
         end
@@ -2443,6 +2443,16 @@ CONFIG = {
         {id = 11813, orangeText = 'i feel better!', cooldown = 400},
     }
   }
+
+macro(1,'big regeneration', function()
+    if player:getOutfit().type == storage.outfitBijuu then return; end
+    if hppercent() >= 100 then return; end
+    for index, value in ipairs(CONFIG.regen) do
+        if (not value.exhaust or value.exhaust <= now) then
+            say(value.spell)
+        end
+    end
+  end);
 
 
 macro(1, function()
@@ -3287,15 +3297,6 @@ addTextEdit("outfitBijuu", storage.outfitBijuu or "302", function(widget, text)
 end, hpPanel)
 
 
-macro(1,'big regeneration', function()
-    if player:getOutfit().type == storage.outfitBijuu then return; end
-    if hppercent() >= 100 then return; end
-    for index, value in ipairs(CONFIG.regen) do
-        if (not value.exhaust or value.exhaust <= now) then
-            say(value.spell)
-        end
-    end
-  end);
 
 
 -----------CORRER
@@ -3383,7 +3384,8 @@ bugmap = macro(1, 'Bug Map', function()
     elseif modules.corelib.g_keyboard.isKeyPressed('q') and not consoleModule:isChatEnabled() then
         checkPos(-3, -3) -- Mover para noroeste
     end
-end) 
+end, hpPanel3) 
+end, hpPanel3) 
 
 bugmap = addIcon("Bug Map", {item = 10610, text = "Bug Map"}, bugmap)
 
