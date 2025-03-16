@@ -3278,7 +3278,6 @@ color:setColor("orange")
         
         
 
-UI.Label('ID BIJUU:', hpPanel):setFont('cipsoftFont')
 
 addTextEdit("outfitBijuu", storage.outfitBijuu or "302", function(widget, text)
 	storage.outfitBijuu = tonumber(text)
