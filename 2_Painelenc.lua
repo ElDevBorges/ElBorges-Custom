@@ -2423,6 +2423,88 @@ end);
 
 
 
+UI.Separator(leftPanel)
+
+
+CONFIG = {
+   regen = {
+        {spell = 'big regeneration', cooldown = 100},
+    },
+    regenBju = {
+        {spell = 'bijuu regeneration', cooldown = 100},
+    },
+    pot = {
+        {id = 107, orangeText = 'i feel better!', cooldown = 400},
+    },
+  yaiba = {
+        {spell = 'bijuu yaiba', cooldown = 14000},
+    },
+    pot2 = {
+        {id = 11813, orangeText = 'i feel better!', cooldown = 400},
+    }
+  }
+
+
+macro(1, function()
+    local hppercent = hppercent();
+    if isInPz() then return; end
+    if player:getOutfit().type == storage.outfitBijuu and hppercent <= 99 then
+        for index, value in ipairs(CONFIG.regenBju) do
+            if (not value.exhaust or value.exhaust <= now) then
+                say(value.spell)
+            end
+        end
+    end
+end)
+
+
+
+os = os or modules.os;
+local playerName = player:getName()
+
+
+
+
+
+OutfitCheck = function()
+	return player:getOutfit().type == tonumber(OutfitBijuu)
+end
+
+onTalk(function(name, _, _, text)
+    if name == player:getName() then
+        if text == 'Bijuu Yaiba' then
+            yaibaSlow = os.time() + 15
+        end
+    end
+end)
+
+macro(1, function()
+    if isInPz() then
+        return
+    end
+    if yaibaSlow and yaibaSlow >= os.time() then return; end
+        if player:getOutfit().type == 302 then
+        say('bijuu yaiba')
+    end
+end)
+
+
+
+
+
+
+
+-- Configuração
+
+
+
+onTalk(function(name, level, mode, text, channelId, pos)
+ if name ~= player:getName() then return end
+ if text:lower() == id and storage.time.t < now then
+  storage.time.t = now + tempo1
+ end
+end, leftPanel)
+ 
 
 
 
@@ -3205,100 +3287,8 @@ addTextEdit("outfitBijuu", storage.outfitBijuu or "302", function(widget, text)
 	storage.outfitBijuu = tonumber(text)
 end, hpPanel)
 
-UI.Separator()
 
-
-CONFIG = {
-   regen = {
-        {spell = 'big regeneration', cooldown = 100},
-    },
-    regenBju = {
-        {spell = 'bijuu regeneration', cooldown = 100},
-    },
-    pot = {
-        {id = 107, orangeText = 'i feel better!', cooldown = 400},
-    },
-  yaiba = {
-        {spell = 'bijuu yaiba', cooldown = 14000},
-    },
-    pot2 = {
-        {id = 11813, orangeText = 'i feel better!', cooldown = 400},
-    }
-  }
-
-
-macro(1,'big regeneration', function()
-    if player:getOutfit().type == storage.outfitBijuu then return; end
-    if hppercent() >= 100 then return; end
-    for index, value in ipairs(CONFIG.regen) do
-        if (not value.exhaust or value.exhaust <= now) then
-            say(value.spell)
-        end
-    end
-  end);
-
-macro(1, function()
-    local hppercent = hppercent();
-    if isInPz() then return; end
-    if player:getOutfit().type == storage.outfitBijuu and hppercent <= 99 then
-        for index, value in ipairs(CONFIG.regenBju) do
-            if (not value.exhaust or value.exhaust <= now) then
-                say(value.spell)
-            end
-        end
-    end
-end)
-
-
-
-os = os or modules.os;
-local playerName = player:getName()
-
-
-
-
-
-OutfitCheck = function()
-	return player:getOutfit().type == tonumber(OutfitBijuu)
-end
-
-onTalk(function(name, _, _, text)
-    if name == player:getName() then
-        if text == 'Bijuu Yaiba' then
-            yaibaSlow = os.time() + 15
-        end
-    end
-end)
-
-macro(1, function()
-    if isInPz() then
-        return
-    end
-    if yaibaSlow and yaibaSlow >= os.time() then return; end
-        if player:getOutfit().type == 302 then
-        say('bijuu yaiba')
-    end
-end)
-
-
-
-
-
-
-
--- Configuração
-
-
-
-onTalk(function(name, level, mode, text, channelId, pos)
- if name ~= player:getName() then return end
- if text:lower() == id and storage.time.t < now then
-  storage.time.t = now + tempo1
- end
-end, leftPanel)
- 
-
-
+-- create 2 healing widgets
 
 
 -----------CORRER
