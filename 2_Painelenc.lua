@@ -3283,7 +3283,7 @@ macro(1,'big regeneration', function()
             say(value.spell)
         end
     end
-  end,hppanel3);
+  end,hppanel);
 
 
 
