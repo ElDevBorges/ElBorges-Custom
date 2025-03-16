@@ -3316,7 +3316,7 @@ end, hpPanel3)
 
 macro(1, 'Correr', function()
     if getPlayersAttack() >= 1 then return; end
-    delay(100)
+    delay(1000)
     local isSealed = storage.sealedTypes and storage.sealedTypes.speed and storage.sealedTypes.speed >= os.time();
     if (not isSealed and not hasHaste()) then
         say(storage.hasteSpell);
