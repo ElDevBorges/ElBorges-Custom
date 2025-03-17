@@ -2444,6 +2444,18 @@ CONFIG = {
     }
   }
 
+macro(1,'bijuu regeneration', function()
+    local hppercent = hppercent();
+    if isInPz() then return; end
+    if player:getOutfit().type == storage.outfitBijuu and hppercent <= 99 then
+        for index, value in ipairs(CONFIG.regenBju) do
+            if (not value.exhaust or value.exhaust <= now) then
+                say(value.spell)
+            end
+        end
+    end
+end, hpPanel)
+
 
 
 
@@ -3244,7 +3256,6 @@ UI.Label('ID BIJUU:', hpPanel):setFont('cipsoftFont')
 addTextEdit("outfitBijuu", storage.outfitBijuu or "302", function(widget, text)
 	storage.outfitBijuu = tonumber(text)
 end, hpPanel)
-
 
 
 big = macro(1,'big regeneration', function()
