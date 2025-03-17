@@ -394,6 +394,11 @@ end
 
 function resetCooldowns()
     if storageProfilesTraps then
+        if storageProfilesTraps.comboSpells then
+            for _, spell in ipairs(storageProfilesTraps.comboSpells) do
+                spell.cooldownSpells = nil 
+            end
+        end
         if storageProfilesTraps.trapspells then
             for _, spell in ipairs(storageProfilesTraps.trapspells) do
                 spell.totalCooldown = nil;
