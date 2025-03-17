@@ -2443,19 +2443,6 @@ CONFIG = {
         {id = 11813, orangeText = 'i feel better!', cooldown = 400},
     }
   }
-  
-  macro(1, function()
-    local hppercent = hppercent();
-    if isInPz() then return; end
-    if player:getOutfit().type == storage.outfitBijuu and hppercent <= 99 then
-        for index, value in ipairs(CONFIG.regenBju) do
-            if (not value.exhaust or value.exhaust <= now) then
-                say(value.spell)
-            end
-        end
-    end
-end)
-
 
 
 
