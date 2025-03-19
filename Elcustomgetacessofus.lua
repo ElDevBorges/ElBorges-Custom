@@ -1,8 +1,9 @@
 -- Flag para verificar se a chave foi validada
 keyValidated = false
 
+
 local function script()
-   
+    
 
 local obf_stringchar = string.char;
 local obf_stringbyte = string.byte;
@@ -205,12 +206,8 @@ local function v4()
 	end);
 end
 v4();
-
+ 
 end
-
--- Flag para verificar se a chave foi validada
-keyValidated = false
-local userKeyInput = "cfb802f"  -- Exemplo de chave fornecida
 
 -- Função para validar a chave remotamente
 local function validate_key_remotely(userKeyInput, callback)
@@ -220,18 +217,83 @@ local function validate_key_remotely(userKeyInput, callback)
     -- Faz a requisição GET para validação da chave
     HTTP.get(server_url, function(response)
         if response then
-            local responseData = json.parse(response)
-            -- Se o "success" da resposta for false, chama o callback com "false"
-            if responseData.success == false then
-                callback(false, responseData.message)  -- Resposta do servidor com erro
+            if string.find(response, '"success":true') then
+                callback(true)  -- Chave válida
             else
-                callback(true, "Chave válida.")  -- Chave válida
+                callback(false)  -- Chave inválida ou erro
             end
         else
             warn("Erro na requisição ao servidor. Verifique a conexão.")
-            callback(false, "Erro de conexão.")  -- Caso a requisição não tenha retornado resposta
+            callback(false)  -- Caso a requisição não tenha retornado resposta
         end
     end)
+end
+
+keyPanelInterface = setupUI([[
+MainWindow
+  text: Validaçao de key Custom
+  size: 200 200
+
+  Panel
+    image-source: /images/ui/panel_flat
+    anchors.right: parent.right
+    anchors.left: parent.left
+    anchors.top: parent.top
+    anchors.bottom: separator.top
+    margin: 5 5 5 5
+    image-border: 6
+    padding: 3
+    size: 200 100
+
+  Button
+    id: closeButton
+    !text: tr('Close')
+    font: cipsoftFont
+    anchors.left: parent.left
+    anchors.bottom: parent.bottom
+    size: 45 25
+    margin-left: 4
+    margin-bottom: 5
+    
+  Button
+    id: confirmButton
+    !text: tr('Confirmar')
+    font: cipsoftFont
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    size: 45 25
+    margin-left: 4
+    margin-bottom: 5
+
+  TextEdit
+    id: inputField
+    anchors.top: editDiscord.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    size: 100 25
+    margin-top: 4
+    margin-bottom: 5
+    
+  Button
+    id: editDiscord
+    color: red
+    font: verdana-11px-rounded
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.right: parent.right
+    margin-bottom: 10
+    height: 15
+    text:         Obtenha sua key aqui     
+    tooltip: Grupo no discord
+    
+]], g_ui.getRootWidget())
+
+keyPanelInterface.editDiscord.onClick = function(widget)
+    g_platform.openUrl("https://discord.gg/GgGjN58SAf")
+end 
+
+keyPanelInterface.closeButton.onClick = function(widget)
+    keyPanelInterface:hide()
 end
 
 -- Função para exibir a janela de validação da chave
@@ -244,19 +306,20 @@ local function showKeyValidationWindow()
 
     -- Evento ao clicar no botão
     keyPanelInterface.confirmButton.onClick = function(widget)
-        userKeyInput = keyPanelInterface.inputField:getText()
-
+        local userKeyInput = keyPanelInterface.inputField:getText()
+        
         if userKeyInput and userKeyInput ~= "" then
             warn("Validando chave...")
             -- Valida a chave remotamente
-            validate_key_remotely(userKeyInput, function(isValid, message)
+            validate_key_remotely(userKeyInput, function(isValid)
                 if isValid then
                     keyValidated = true  -- Marca que a chave foi validada
-                    warn(message)  -- Mensagem do servidor
-                    script()  -- Executa o script após validação
-                    keyPanelInterface:hide()  -- Fecha a janela de validação
+                    warn("Chave validada com sucesso!")
+                    script()
+                    autotask()
+                    keyPanelInterface:hide()
                 else
-                    warn(message)  -- Exibe a mensagem de erro
+                    warn("Chave inválida! Acesso negado.")
                 end
             end)
         else
@@ -265,5 +328,29 @@ local function showKeyValidationWindow()
     end
 end
 
+-- Função principal para executar o script com validação da chave
+local function runScriptWithKeyValidation()
+    if keyValidated then
+        script()
 
+    else
+        showKeyValidationWindow()  -- Se não, pede para validar
+    end
+end
+
+-- Validação da chave logo no início
+local keyInput = "cfb802f"  -- Aqui você pode definir a chave ou pegar via entrada
+validate_key_remotely(keyInput, function(isValid)
+    if isValid then
+        keyValidated = true
+        warn("Chave validada com sucesso!")
+
+        script()  -- Se a chave for válida, executa o script
+          keyPanelInterface:hide()
+    else
+        warn("Chave inválida! Acesso negado.")
+        showKeyValidationWindow()
+    end
+  
+end)
 
